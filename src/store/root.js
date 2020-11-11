@@ -6,6 +6,6 @@ const state = {
 }
 
 // export default createStore(state)
-// export default createStore2(state)
-export default createStoreProxy(state)
+export default createStore2(state)
+// export default createStoreProxy(state)
 // export default reactiveStore(state)

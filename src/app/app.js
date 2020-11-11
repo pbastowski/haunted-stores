@@ -1,7 +1,7 @@
 import { render, virtual, html, useState, json } from '/@/libs'
 
-import Test1 from '../test1.js'
-// import Test1 from '../test2.js'
+// import Test1 from '../test1.js'
+import Test1 from '../test2.js'
 
 import rootStore from '../store/root.js'
 
@@ -9,8 +9,8 @@ export default virtual(() => {
     const [show1, setShow1] = useState(true)
     const [show2, setShow2] = useState(true)
     const [show3, setShow3] = useState(true)
-    const store = rootStore({ root: true })
-    // const [store] = rootStore({ root: true })
+    // const store = rootStore({ root: true })
+    const [store] = rootStore({ root: true })
     // const store = {}
 
     return html`
