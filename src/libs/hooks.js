@@ -115,13 +115,13 @@ export function createStore2(store) {
         Object.assign(store, nv)
 
         if (rootUpdater) {
-            console.log('ROOT update')
+            // console.log('ROOT update')
             // A root component uses a store above other components in the component tree.
             // In this case we only update the root component, because doing so will
             // trigger updates in all child components anyway.
             rootUpdater()
         } else {
-            console.log('ALL update')
+            // console.log('ALL update')
             // notify all subscribers that the store has been updated
             for (let update of updaters) update()
         }
@@ -135,7 +135,7 @@ export function createStore2(store) {
                 super(id, state)
                 if (root) rootUpdater = this.state.update
                 else updaters.add(this.state.update)
-                console.log('10 HOOK: updaters:', store.$name || '', updaters.size)
+                // console.log('10 HOOK: updaters:', store.$name || '', updaters.size)
             }
 
             update() {
@@ -146,7 +146,7 @@ export function createStore2(store) {
             teardown() {
                 if (this.state.update === rootUpdater) rootUpdater = null
                 else updaters.delete(this.state.update)
-                console.log('99 HOOK: updaters:', store.$name || '', updaters.size)
+                // console.log('99 HOOK: updaters:', store.$name || '', updaters.size)
             }
         }
     )
@@ -177,13 +177,13 @@ export function createStoreProxy(state) {
         set(o, p, v) {
             o[p] = v
             if (rootUpdater) {
-                console.log('ROOT update')
+                // console.log('ROOT update')
                 // A root component uses a store above other components in the component tree.
                 // In this case we only update the root component, because doing so will
                 // trigger updates in all child components anyway.
                 rootUpdater()
             } else {
-                console.log('ALL update')
+                // console.log('ALL update')
                 // notify all subscribers that the store has been updated
                 for (let update of updaters) update()
             }
@@ -197,18 +197,18 @@ export function createStoreProxy(state) {
                 super(id, state)
                 if (root) rootUpdater = this.state.update
                 else updaters.add(this.state.update)
-                console.log('10 HOOK: updaters:', updaters.size)
+                // console.log('10 HOOK: updaters:', updaters.size)
             }
 
             update(store) {
-                // console.log('20 HOOK:', proxy, updaters.size)
+                // console.log('20 HOOK:', proxy, updaters.size, this.state)
                 return proxy
             }
 
             teardown() {
                 if (this.state.update === rootUpdater) rootUpdater = null
                 else updaters.delete(this.state.update)
-                console.log('99 HOOK: updaters:', updaters.size)
+                // console.log('99 HOOK: updaters:', updaters.size)
             }
         }
     )
