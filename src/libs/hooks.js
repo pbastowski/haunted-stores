@@ -100,10 +100,13 @@ function getCallerFunction(line = 3) {
     that actually call useStore and does not require a useStore in a parent
     component.
 
-    If you need to useStore in a parent component, then you should call it
-    lie this `useStore({ root: true })` to ensure that only one re-render per
-    store update is executed. Otherwise, multiple un-necessary re-renders will
-    occur.
+    If you need to useStore in a parent component, perhaps the root component,
+    then you should call it like this
+
+        const [store, setStore] = useStore({ root: true })
+
+    to ensure that only one re-render per store update is executed. Otherwise,
+    multiple un-necessary re-renders will occur.
 */
 export function createStore2(store) {
     const updaters = new Set()
