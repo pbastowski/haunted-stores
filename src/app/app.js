@@ -8,8 +8,9 @@ import rootStore from '../store/root.js'
 export default virtual(() => {
     const [show, setShow] = useObj({ 1: true, 2: true, 3: true })
     // const store = rootStore({ root: true })
-    const [store] = rootStore({ root: true })
     // const store = {}
+    const [store] = rootStore({ root: true })
+    window.store = store
 
     return html`
         <h1>This is the APP</h1>
@@ -18,8 +19,6 @@ export default virtual(() => {
             excepturi explicabo fugit hic labore nisi rem repellendus, voluptate? Accusantium atque
             consectetur exercitationem explicabo, quos saepe voluptatibus.
         </p>
-
-        <p>${json(store)}</p>
 
         <div class="row">
             ${Object.keys(show).map(
