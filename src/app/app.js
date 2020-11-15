@@ -33,7 +33,7 @@ export default virtual(() => {
                 `
             )}
         </div>
-        ${console.log('@ RENDER app')}
+        ${(console.clear(), console.log('@ RENDER app'))}
     `
 })
 
