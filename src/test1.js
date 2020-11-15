@@ -3,7 +3,6 @@ import rootStore from './store/root.js'
 
 export default virtual(title => {
     const store = rootStore()
-    window.store = store
 
     return html`
         <h3>This is ${title}</h3>
