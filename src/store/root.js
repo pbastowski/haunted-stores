@@ -2,7 +2,10 @@ import { json, createStore, createStore2, createStoreProxy, reactiveStore } from
 // import { useState, hook, Hook } from 'haunted'
 
 const state = {
-    abc: 123
+    abc: 123,
+    add(dx) {
+        return state.$set({ abc: state.abc + dx })
+    }
 }
 
 // export default createStore(state)
