@@ -36,16 +36,17 @@ export const useObj = obj => {
     import { createStore } from '/src/libs'
     let state = {
         name: '',
-        surname: ''
+        surname: '',
+        fullName
     }
     export default createStore(state)
-    export const fullName = () => store.name + ' ' + store.surname
+    export function fullName() { return store.name + ' ' + store.surname }
 
     // /src/app.js
     import UserName from '/src/user-name'
     import userStore from '/src/store/user'
     export default () => {
-        userStore()
+        userStore()  // this is the only place to call userStore()
         return html`
             <h1>The App</h1>
             ${UserName()}
@@ -53,12 +54,11 @@ export const useObj = obj => {
     }
 
     // /src/user-name.js
-    import userStore, { fullName } from '/src/store/user'
+    import { store } from '/src/store/user'  // here we just import the store and use it
     export default () => {
-        const [store, setStore] = userStore()
         // do stuff with the store
         // ...
-        return html`<h1>User Name: ${ fullName() }</h1>`
+        return html`<h1>User Name: ${ store.fullName() }</h1>`
     }
 
 
@@ -76,21 +76,54 @@ export const useObj = obj => {
     which retrieves the current store value and everything works as expected.
 
 */
-export function createStore(state) {
+export const createStore = store => {
     // console.log('@ CREATE STORE', getCallerFunction())
+
     return () => {
-        if (!state.$set) {
-            let [v, sv] = useState(state)
-            state.$set = nv => sv(Object.assign(state, nv))
-            // console.log('@ USE STORE', getCallerFunction())
-        }
-        return [state, state.$set]
+        let [value, set] = useState(store)
+        // ;[value, set] = useState(() => {
+        //     console.log('@ USE STORE', getCallerFunction(6))
+        //     return store
+        // })
+
+        // We return a custom set function that spreads the new value into the store,
+        // because if we just overwrote the whole store we would loose any actions
+        // defined in it.
+        if (!store.$set)
+            store.$set = (nv, replaceStore = false) => {
+                // Replacing actually means emptying the store object of all keys.
+                // If we replaced it we would loose the reference to the original
+                // store and after that $set would work as expected any more.
+                if (replaceStore)
+                    for (var key in store) if (store.hasOwnProperty(key)) delete store[key]
+
+                // Update values within the store, without overwriting it's reference,
+                // because other components may hold a reference to the original store.
+                Object.assign(store, nv)
+
+                // Now, use the setter function with a new reference to force an update
+                set({})
+            }
+
+        return [store, store.$set]
     }
 }
 
+// export function createStore(state) {
+//     // console.log('@ CREATE STORE', getCallerFunction())
+//     return () => {
+//         if (!state.$set) {
+//             let [v, sv] = useState(state)
+//             state.$set = nv => sv(Object.assign(state, nv))
+//             // console.log('@ USE STORE', getCallerFunction())
+//         }
+//         return [state, state.$set]
+//     }
+// }
+
 function getCallerFunction(line = 3) {
     if (line === -1) return new Error().stack
-    else return new Error().stack.split('    at ')[3]
+    else return new Error().stack.split('    at ')[line]
 }
 
 /*

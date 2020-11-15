@@ -1,13 +1,12 @@
-import { html, virtual, json } from './libs'
-import rootStore from './store/root.js'
+import { html, virtual, json, useEffect } from './libs'
+import { store } from './store/root.js'
 
 export default virtual(title => {
-    const [store, setStore] = rootStore()
-
+    useEffect(() => store.$set({ text: 'Using TEST2' }), [])
     return html`
         <h3>This is ${title}</h3>
         <pre>${json(store)}</pre>
-        <button @click=${() => setStore({ abc: store.abc + 1 })}>+1</button>
+        <button @click=${() => store.add(1)}>+1</button>
         ${console.log('@ RENDER test 2')}
     `
 })
