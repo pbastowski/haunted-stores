@@ -1,5 +1,5 @@
 import { html, virtual, json, useEffect } from './libs'
-import { store as rootStore } from './store/root.js'
+import rootStore from './store/root.js'
 
 export default virtual(title => {
     useEffect(() => rootStore.$set({ text: 'Using TEST2' }), [])

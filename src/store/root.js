@@ -1,7 +1,7 @@
 import { json, createStore, createStore2, createStoreProxy, reactiveStore } from '../libs'
 // import { useState, hook, Hook } from 'haunted'
 
-export const store = {
+const store = {
     abc: 123,
     text: 'lalala',
 
@@ -10,7 +10,9 @@ export const store = {
     }
 }
 
-export default createStore(store)
+const useStore = createStore(store)
 // export default createStore2(state)
 // export default createStoreProxy(state)
 // export default reactiveStore(state)
+
+export { store as default, useStore }

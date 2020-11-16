@@ -3,7 +3,7 @@ import { render, virtual, html, useState, useObj, json } from '/@/libs'
 // import Test1 from '../test1.js'
 import Test1 from '../test2.js'
 
-import rootStore from '../store/root.js'
+import { useStore as rootStore } from '../store/root.js'
 
 export default virtual(() => {
     const [show, setShow] = useObj({ 1: true, 2: true, 3: true })
