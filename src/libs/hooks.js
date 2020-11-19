@@ -1,4 +1,4 @@
-import { useState, useEffect, hook, Hook } from 'haunted'
+import { useState, useEffect, hook, Hook, useRef } from 'haunted'
 import * as hyperactiv from 'hyperactiv/src'
 const { observe, computed } = hyperactiv.default
 
@@ -153,6 +153,35 @@ export function createStore2(store) {
             }
         }
     )
+}
+
+export function createStore3(store) {
+    // console.log('@ CREATE', getCallerFunction())
+    let updaters = new Set()
+    let v, setv
+
+    store.$set = nv => {
+        Object.assign(store, nv)
+        for (let update of updaters) update({})
+    }
+
+    return () => {
+        ;[v, setv] = useState()
+        let ref = useRef()
+        if (!ref.current) ref.current = setv
+
+        updaters.add(setv)
+
+        useEffect(() => {
+            // console.log('@ USE', updaters.size)
+            return () => {
+                updaters.delete(ref.current)
+                // console.log('@ DELETE', updaters.size)
+            }
+        }, [])
+
+        return store
+    }
 }
 
 /*
