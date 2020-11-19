@@ -7,7 +7,7 @@ export default virtual(title => {
     return html`
         <h3>This is ${title}</h3>
         <pre>${json(store)}</pre>
-        <button @click=${() => store.abc++}>+1</button>
+        <button @click=${() => store.$set({ abc: store.abc + 1 })}>+1</button>
         ${console.log('@ RENDER test 1')}
     `
 })

@@ -158,24 +158,31 @@ export function createStore2(store) {
 export function createStore3(store) {
     // console.log('@ CREATE', getCallerFunction())
     let updaters = new Set()
-    let v, setv
+    let v, setv, rootUpdater
 
     store.$set = nv => {
         Object.assign(store, nv)
         for (let update of updaters) update({})
     }
 
-    return () => {
+    return ({ root = false } = {}) => {
         ;[v, setv] = useState()
         let ref = useRef()
         if (!ref.current) ref.current = setv
 
-        updaters.add(setv)
+        if (root) {
+            rootUpdater = 1
+            updaters.add(setv)
+        }
+        if (!rootUpdater) updaters.add(setv)
+
+        // const line = getCallerFunction()
 
         useEffect(() => {
-            // console.log('@ USE', updaters.size)
+            // console.log('@ USE', updaters.size, line)
             return () => {
                 updaters.delete(ref.current)
+                if (root) rootUpdater = null
                 // console.log('@ DELETE', updaters.size)
             }
         }, [])
