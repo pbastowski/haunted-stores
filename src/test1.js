@@ -1,8 +1,8 @@
 import { html, virtual, json } from './libs'
-import rootStore from './store/root.js'
+import rootStore, { store } from './store/root.js'
 
 export default virtual(title => {
-    const store = rootStore()
+    // const store = rootStore()
 
     return html`
         <h3>This is ${title}</h3>
