@@ -85,15 +85,15 @@ export function deepMerge(a, b) {
     which retrieves the current store value and everything works as expected.
 
 */
-export function createStore(state) {
+export function createStore(store) {
     // console.log('@ CREATE STORE', getCallerFunction())
     return () => {
-        if (!state.$set) {
-            let [v, sv] = useState(state)
-            state.$set = nv => sv(deepMerge(state, nv))
+        if (!store.$set) {
+            let [v, sv] = useState(store)
+            store.$set = nv => sv(deepMerge(store, nv))
             // console.log('@ USE STORE', getCallerFunction())
         }
-        return [state, state.$set]
+        return store
     }
 }
 
