@@ -203,7 +203,7 @@ export function createStore4(store) {
                         el = el.nextElementSibling
                     )
                         if (el.contains(this.state.host.startNode)) {
-                            console.log('>>', el)
+                            // console.log('2>>', el, getCallerFunction(4))
                             mayReceiveUpdates = false
                             break
                         }
