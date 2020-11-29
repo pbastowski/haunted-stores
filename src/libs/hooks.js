@@ -298,6 +298,17 @@ export function createStore4(store) {
     )
 }
 
+/*
+    createStore3
+
+    This is a react compatible version. It works both in haunted and in react.
+    It will work exactly the same as createStore2, but without the need to
+    use the custom hook class.
+
+    When used with Haunted, you may, however, need to use the "root" parameter
+    when using the store hook to prevent unnecessary re-renders. See
+    createStore2 comments for an explanation.
+ */
 export function createStore3(store) {
     // console.log('@ CREATE', getCallerFunction())
     let updaters = new Set()
