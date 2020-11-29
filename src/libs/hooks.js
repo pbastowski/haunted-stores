@@ -99,7 +99,7 @@ export function createStore(store) {
 
 function getCallerFunction(line = 3) {
     if (line === -1) return new Error().stack
-    else return new Error().stack.split('    at ')[3]
+    else return new Error().stack.split('    at ')[line]
 }
 
 /*
