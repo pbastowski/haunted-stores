@@ -164,6 +164,135 @@ export function createStore2(store) {
     )
 }
 
+/*
+    createStore4
+
+    Usage
+    -----
+
+    // store.js
+    import { createStore4 } from './hooks.js'
+    const store = {
+        text: 'Testing'
+    }
+    export default createStore(store)
+
+    // app.js
+    import { html } from 'haunted'
+    import useStore from './store.js'
+
+    export default virtual(()=> {
+        const store = useStore()
+
+        return html`<h1>text: ${store.text}</h1>`
+    })
+
+    Notes
+    -----
+
+    This version checks  if the new node is contained by any existing nodes.
+    If it is then we don't want to send it updates and will send them to the
+    containing node.
+
+    Why? Because when using haunted virtual components, an update to the parent
+    will also update all the children. We don't mind that, however, we need to
+    ensure that the children don't also receive separate updates, otherwise
+    we'll have unnecessary duplicate updates.
+
+    Bootstrap Component
+    -------------
+
+    The bootstrap component, if it consists of more than one virtual components,
+    must be wrapped in a physical DOM element or have a dummy element added to
+    the markup somewhere, otherwise haunted will unmount a virtual component.
+    We don't know why this happens, but the solution is as stated above and
+    the is an example below.
+
+    So, the below will cause a problem
+
+    const App = ()=> html`
+        ${ComponentOne()}
+        ${ComponentTwo()}
+    `
+    render(App(), document.querySelector('app'))
+
+    The solution looks like this
+
+    const App = ()=> html`
+        <div>
+            ${ComponentOne()}
+            ${ComponentTwo()}
+        </div>
+    `
+
+    or like this
+
+    const App = ()=> html`
+        ${ComponentOne()}
+        <span></span>
+        ${ComponentTwo()}
+    `
+
+    or by only having one virtual component to bootstrap with
+
+    const App = ()=> html`${ComponentOne()}`
+
+ */
+export function createStore4(store) {
+    const updaters = new Set()
+
+    Object.defineProperty(store, '$set', {
+        enumerable: false,
+        writable: false,
+        configurable: false,
+        value: nv => {
+            deepMerge(store, nv)
+
+            // notify all subscribers that the store has been updated
+            for (let updater of updaters) updater.update()
+        }
+    })
+
+    return hook(
+        class extends Hook {
+            constructor(id, state) {
+                super(id, state)
+
+                let mayReceiveUpdates = true
+
+                // Check if the new node is contained by any existing nodes.
+                for (let u of updaters) {
+                    for (
+                        let el = u.host.startNode.nextSibling;
+                        el && el !== u.host.endNode;
+                        el = el.nextSibling
+                    ) {
+                        if (el.contains(this.state.host.startNode)) {
+                            mayReceiveUpdates = false
+                            break
+                        }
+                    }
+                    if (!mayReceiveUpdates) break
+                }
+
+                if (mayReceiveUpdates) updaters.add(this.state)
+
+                // console.log('>>>> 10 HOOK: updaters:', store.$name || '', updaters.size)
+            }
+
+            update() {
+                // console.log('==== 20 HOOK:', store.$name, store, updaters.size)
+                return store
+            }
+
+            teardown() {
+                updaters.delete(this.state)
+                // console.log('<<<< 99 HOOK: updaters:', updaters.size, getCallerFunction(4))
+            }
+        }
+    )
+}
+
 export function createStore3(store) {
     // console.log('@ CREATE', getCallerFunction())
     let updaters = new Set()

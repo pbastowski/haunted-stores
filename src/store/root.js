@@ -3,20 +3,16 @@ import {
     createStore,
     createStore2,
     createStore3,
+    createStore4,
     createStoreProxy,
     reactiveStore
 } from '../libs'
-// import { useState, hook, Hook } from 'haunted'
 
-const state = {
+export const store = {
     abc: 123,
     add(dx) {
-        return state.$set({ abc: state.abc + dx })
+        return store.$set({ abc: store.abc + dx })
     }
 }
 
-export default createStore3(state)
-// export default createStore(state)
-// export default createStore2(state)
-// export default createStoreProxy(state)
-// export default reactiveStore(state)
+export default createStore4(store)

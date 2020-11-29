@@ -1,16 +1,17 @@
-import { render, virtual, html, useState, json, useObj } from '/@/libs'
+import { render, virtual, html, useState, json, useObj, useEffect } from '/@/libs'
 
 import Test1 from '../test1.js'
-// import Test1 from '../test2.js'
+import Test2 from '../test2.js'
 
 import rootStore from '../store/root.js'
 
 export default virtual(() => {
     const [show, setShow] = useObj({ 1: true, 2: true, 3: true })
     const store = rootStore({ root: true })
-    // const store = {}
-    // const [store] = rootStore({ root: true })
-    // window.store = store
+
+    useEffect(() => {
+        return () => console.log('<<< DESTROY app')
+    }, [])
 
     return html`
         <h1>This is the APP</h1>
@@ -30,8 +31,9 @@ export default virtual(() => {
                     </div>
                 `
             )}
+            <div class="col">${Test2('TWO')}</div>
         </div>
-        ${console.log('@ RENDER app')}
+        ${console.log('@ APP')}
     `
 })
 
