@@ -3,6 +3,7 @@ import {
     createStore,
     createStore2,
     createStore3,
+    createStore4,
     createStoreProxy,
     reactiveStore
 } from '../libs'
@@ -15,8 +16,9 @@ const state = {
     }
 }
 
-export default createStore3(state)
 // export default createStore(state)
 // export default createStore2(state)
+// export default createStore3(state)
+export default createStore4(state)
 // export default createStoreProxy(state)
 // export default reactiveStore(state)

@@ -164,6 +164,69 @@ export function createStore2(store) {
     )
 }
 
+/*
+    createStore4
+
+    This version checks to see who
+ */
+export function createStore4(store) {
+    const updaters = new Set()
+
+    const setter = nv => {
+        deepMerge(store, nv)
+
+        // notify all subscribers that the store has been updated
+        for (let updater of updaters) updater.update()
+    }
+
+    store.$set = setter
+
+    return hook(
+        class extends Hook {
+            constructor(id, state, { root } = {}) {
+                super(id, state)
+
+                let mayReceiveUpdates = true
+
+                // Check if the new node is contained by any existing nodes.
+                // If it is then we don't want to send it updates and will
+                // send them to the containing node. Why? Because when using
+                // haunted virtual components, an update to the parent
+                // will also update all the children. We don't mind that,
+                // however, we need to ensure that the children don't also
+                // receive separate updates, otherwise we'll have
+                // unnecessary duplicate updates.
+                for (let u of updaters) {
+                    for (
+                        let el = u.host.startNode.nextElementSibling;
+                        el && el !== this.state.host.endNode;
+                        el = el.nextElementSibling
+                    )
+                        if (el.contains(this.state.host.startNode)) {
+                            console.log('>>', el)
+                            mayReceiveUpdates = false
+                            break
+                        }
+                    if (!mayReceiveUpdates) break
+                }
+
+                if (mayReceiveUpdates) updaters.add(this.state)
+                // console.log('10 HOOK: updaters:', store.$name || '', updaters.size)
+            }
+
+            update() {
+                // console.log('20 HOOK:', store.$name, store, updaters.size)
+                return store
+            }
+
+            teardown() {
+                updaters.delete(this.state)
+                // console.log('99 HOOK: updaters:', store.$name || '', updaters.size)
+            }
+        }
+    )
+}
+
 export function createStore3(store) {
     // console.log('@ CREATE', getCallerFunction())
     let updaters = new Set()
