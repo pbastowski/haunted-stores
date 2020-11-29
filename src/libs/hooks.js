@@ -187,6 +187,11 @@ export function createStore2(store) {
         return html`<h1>text: ${store.text}</h1>`
     })
 
+    // index.js
+    import App from './app.js'
+
+    render(App(), document.querySelector('app')
+
     Notes
     -----
 
