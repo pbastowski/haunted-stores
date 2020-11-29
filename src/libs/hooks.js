@@ -1,5 +1,6 @@
 import { useState, useEffect, hook, Hook, useRef } from 'haunted'
 import * as hyperactiv from 'hyperactiv/src'
+
 const { observe, computed } = hyperactiv.default
 
 /*
@@ -17,7 +18,15 @@ const { observe, computed } = hyperactiv.default
 */
 export const useObj = obj => {
     const [v, s] = useState(obj)
-    return [v, nv => s({ ...v, ...nv })]
+    return [v, nv => s(deepMerge(v, nv))]
+}
+
+export function deepMerge(a, b) {
+    for (let i in b) {
+        if (!a.hasOwnProperty(i) || typeof a[i] !== 'object') a[i] = b[i]
+        else deepMerge(a[i], b[i])
+    }
+    return a
 }
 
 /*
@@ -81,7 +90,7 @@ export function createStore(state) {
     return () => {
         if (!state.$set) {
             let [v, sv] = useState(state)
-            state.$set = nv => sv(Object.assign(state, nv))
+            state.$set = nv => sv(deepMerge(state, nv))
             // console.log('@ USE STORE', getCallerFunction())
         }
         return [state, state.$set]
@@ -115,7 +124,7 @@ export function createStore2(store) {
 
     const setter = nv => {
         // store = { ...store, ...nv }
-        Object.assign(store, nv)
+        deepMerge(store, nv)
 
         if (rootUpdater) {
             // console.log('ROOT update')
@@ -161,7 +170,7 @@ export function createStore3(store) {
     let v, setv, rootUpdater
 
     store.$set = nv => {
-        Object.assign(store, nv)
+        deepMerge(store, nv)
         for (let update of updaters) update({})
     }
 
